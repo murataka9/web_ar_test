@@ -1,26 +1,13 @@
-<!-- (c) 2019 kasuga student council -->
-
 <!DOCTYPE html>
 <html>
 
 <head>
-    <title>WebAR Triangle Between Markers</title>
+    <title>WebAR</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/1.7.1/aframe/build/aframe-ar.js"></script>
-</head>
-
-<body style="margin: 0; overflow: hidden;">
-    <a-scene embedded arjs="sourceType: webcam;">
-        <!-- マーカー1 -->
-        <a-marker preset="hiro" id="marker1"></a-marker>
-        <!-- マーカー2 -->
-        <a-marker preset="kanji" id="marker2"></a-marker>
-        <!-- 三角形を配置するためのエンティティ -->
-        <a-entity id="triangle"></a-entity>
-        <a-entity camera></a-entity>
-    </a-scene>
 
     <script>
+        // コンポーネントの登録
         AFRAME.registerComponent('update-triangle-position', {
             tick: function () {
                 const marker1 = document.querySelector("#marker1");
@@ -28,40 +15,53 @@
                 const triangle = document.querySelector("#triangle");
 
                 if (marker1.object3D.visible && marker2.object3D.visible) {
-                    //マーカーの座標を取得する
+                    // マーカーの座標を取得
                     const pos1 = marker1.object3D.position;
                     const pos2 = marker2.object3D.position;
 
-                    //中点の計算をしていくぅ
+                    // 中点を計算
                     const midPoint = {
                         x: (pos1.x + pos2.x) / 2,
                         y: (pos1.y + pos2.y) / 2,
                         z: (pos1.z + pos2.z) / 2,
                     };
 
-                    //三角形の位置を中点に設定
+                    // 三角形の位置を中点に設定
                     triangle.setAttribute("position", `${midPoint.x} ${midPoint.y} ${midPoint.z}`);
                 }
             }
         });
 
-        //三角形を置く
-        AFRAME.registerPrimitive('a-triangle', {
-            defaultComponents: {
-                geometry: {
-                    primitive: 'triangle',
-                    vertexA: '0 0.5 0',
-                    vertexB: '-0.5 -0.5 0',
-                    vertexC: '0.5 -0.5 0'
-                },
-                material: { color: 'blue' }
-            }
-        });
-
-        //カメラが起動したらupdate-triangle-positionコンポーネントを追加
-        document.querySelector('a-scene').addEventListener('loaded', function () {
-            document.querySelector("#triangle").setAttribute('update-triangle-position', '');
-        });
+        // a-triangleがまだ登録されていない場合のみ登録
+        if (!AFRAME.primitives.primitives['a-triangle']) {
+            AFRAME.registerPrimitive('a-triangle', {
+                defaultComponents: {
+                    geometry: {
+                        primitive: 'triangle',
+                        vertexA: '0 0.5 0',
+                        vertexB: '-0.5 -0.5 0',
+                        vertexC: '0.5 -0.5 0'
+                    },
+                    material: { color: 'blue' }
+                }
+            });
+        }
     </script>
+</head>
+
+<body style="margin: 0; overflow: hidden;">
+    <a-scene embedded arjs="sourceType: webcam;">
+        <!-- マーカー1 -->
+        <a-marker preset="hiro" id="marker1"></a-marker>
+
+        <!-- マーカー2 -->
+        <a-marker preset="kanji" id="marker2"></a-marker>
+
+        <!-- 三角形を配置するためのエンティティ -->
+        <a-entity id="triangle" update-triangle-position></a-entity>
+
+        <a-entity camera></a-entity>
+    </a-scene>
 </body>
+
 </html>
