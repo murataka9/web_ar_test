@@ -2,12 +2,25 @@
 <html>
 
 <head>
-    <title>WebAR</title>
+    <title>WebAR Triangle Between Markers</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/1.7.1/aframe/build/aframe-ar.js"></script>
 
     <script>
-        // コンポーネントの登録
+        AFRAME.registerComponent('marker-visualization', {
+            init: function () {
+                this.el.setAttribute('visible', false); // 初期状態では非表示
+            },
+            tick: function () {
+                if (this.el.object3D.visible) {
+                    this.el.setAttribute('visible', true); // マーカーが見えたら表示
+                } else {
+                    this.el.setAttribute('visible', false); // マーカーが見えなくなったら非表示
+                }
+            }
+        });
+
+        // 三角形の位置を更新するコンポーネント
         AFRAME.registerComponent('update-triangle-position', {
             tick: function () {
                 const marker1 = document.querySelector("#marker1");
@@ -19,6 +32,9 @@
                     const pos1 = marker1.object3D.position;
                     const pos2 = marker2.object3D.position;
 
+                    console.log("Marker 1 position:", pos1);
+                    console.log("Marker 2 position:", pos2);
+
                     // 中点を計算
                     const midPoint = {
                         x: (pos1.x + pos2.x) / 2,
@@ -26,13 +42,17 @@
                         z: (pos1.z + pos2.z) / 2,
                     };
 
+                    console.log("Midpoint position:", midPoint);
+
                     // 三角形の位置を中点に設定
                     triangle.setAttribute("position", `${midPoint.x} ${midPoint.y} ${midPoint.z}`);
+                    triangle.setAttribute('visible', true); // 三角形を表示
+                } else {
+                    triangle.setAttribute('visible', false); // マーカーが見えなければ三角形を非表示
                 }
             }
         });
 
-        // a-triangleがまだ登録されていない場合のみ登録
         if (!AFRAME.primitives.primitives['a-triangle']) {
             AFRAME.registerPrimitive('a-triangle', {
                 defaultComponents: {
@@ -52,13 +72,17 @@
 <body style="margin: 0; overflow: hidden;">
     <a-scene embedded arjs="sourceType: webcam;">
         <!-- マーカー1 -->
-        <a-marker preset="hiro" id="marker1"></a-marker>
+        <a-marker preset="hiro" id="marker1" marker-visualization>
+            <a-box position="0 0.5 0" material="color: red;"></a-box> <!-- マーカー認識の確認用 -->
+        </a-marker>
 
         <!-- マーカー2 -->
-        <a-marker preset="kanji" id="marker2"></a-marker>
+        <a-marker preset="kanji" id="marker2" marker-visualization>
+            <a-box position="0 0.5 0" material="color: green;"></a-box> <!-- マーカー認識の確認用 -->
+        </a-marker>
 
         <!-- 三角形を配置するためのエンティティ -->
-        <a-entity id="triangle" update-triangle-position></a-entity>
+        <a-entity id="triangle" update-triangle-position visible="false"></a-entity>
 
         <a-entity camera></a-entity>
     </a-scene>
