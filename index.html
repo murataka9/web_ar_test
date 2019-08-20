@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>WebAR Triangle Between Markers</title>
+    <title>WebAR Coordinate Axes Between Markers</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/1.7.1/aframe/build/aframe-ar.js"></script>
 
@@ -20,12 +20,12 @@
             }
         });
 
-        // 三角形の位置を更新するコンポーネント
-        AFRAME.registerComponent('update-triangle-position', {
+        // 座標軸の位置を更新するコンポーネント
+        AFRAME.registerComponent('update-axes-position', {
             tick: function () {
                 const marker1 = document.querySelector("#marker1");
                 const marker2 = document.querySelector("#marker2");
-                const triangle = document.querySelector("#triangle");
+                const axes = document.querySelector("#axes");
 
                 if (marker1.object3D.visible && marker2.object3D.visible) {
                     // マーカーの座標を取得
@@ -44,28 +44,14 @@
 
                     console.log("Midpoint position:", midPoint);
 
-                    // 三角形の位置を中点に設定
-                    triangle.setAttribute("position", `${midPoint.x} ${midPoint.y} ${midPoint.z}`);
-                    triangle.setAttribute('visible', true); // 三角形を表示
+                    // 座標軸の位置を中点に設定
+                    axes.setAttribute("position", `${midPoint.x} ${midPoint.y} ${midPoint.z}`);
+                    axes.setAttribute('visible', true); // 座標軸を表示
                 } else {
-                    triangle.setAttribute('visible', false); // マーカーが見えなければ三角形を非表示
+                    axes.setAttribute('visible', false); // マーカーが見えなければ座標軸を非表示
                 }
             }
         });
-
-        if (!AFRAME.primitives.primitives['a-triangle']) {
-            AFRAME.registerPrimitive('a-triangle', {
-                defaultComponents: {
-                    geometry: {
-                        primitive: 'triangle',
-                        vertexA: '0 0.5 0',
-                        vertexB: '-0.5 -0.5 0',
-                        vertexC: '0.5 -0.5 0'
-                    },
-                    material: { color: 'blue' }
-                }
-            });
-        }
     </script>
 </head>
 
@@ -81,8 +67,12 @@
             <a-box position="0 0.5 0" material="color: green;"></a-box> <!-- マーカー認識の確認用 -->
         </a-marker>
 
-        <!-- 三角形を配置するためのエンティティ -->
-        <a-entity id="triangle" update-triangle-position visible="false"></a-entity>
+        <!-- 座標軸を配置するためのエンティティ -->
+        <a-entity id="axes" update-axes-position visible="false">
+            <a-entity line="start: 0, 0, 0; end: 1, 0, 0; color: red"></a-entity> <!-- X軸 -->
+            <a-entity line="start: 0, 0, 0; end: 0, 1, 0; color: green"></a-entity> <!-- Y軸 -->
+            <a-entity line="start: 0, 0, 0; end: 0, 0, 1; color: blue"></a-entity> <!-- Z軸 -->
+        </a-entity>
 
         <a-entity camera></a-entity>
     </a-scene>
