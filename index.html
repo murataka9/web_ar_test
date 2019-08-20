@@ -20,7 +20,6 @@
             }
         });
 
-        // 座標軸の位置を更新するコンポーネント
         AFRAME.registerComponent('update-axes-position', {
             tick: function () {
                 const marker1 = document.querySelector("#marker1");
@@ -32,9 +31,6 @@
                     const pos1 = marker1.object3D.position;
                     const pos2 = marker2.object3D.position;
 
-                    console.log("Marker 1 position:", pos1);
-                    console.log("Marker 2 position:", pos2);
-
                     // 中点を計算
                     const midPoint = {
                         x: (pos1.x + pos2.x) / 2,
@@ -42,7 +38,9 @@
                         z: (pos1.z + pos2.z) / 2,
                     };
 
-                    console.log("Midpoint position:", midPoint);
+                    // 中点を少しカメラ方向に移動させる
+                    const adjustment = 0.1; // 適宜調整可能
+                    midPoint.z -= adjustment;
 
                     // 座標軸の位置を中点に設定
                     axes.setAttribute("position", `${midPoint.x} ${midPoint.y} ${midPoint.z}`);
