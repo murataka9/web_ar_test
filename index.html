@@ -1,6 +1,7 @@
+<!-- (c) 2019 Takahito Murakami, Student council of kasuga UTsukuba -->
+
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>WebAR Coordinate Axes Between Markers</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
@@ -39,7 +40,7 @@
                     };
 
                     // 中点を少しカメラ方向に移動させる
-                    const adjustment = 0.1; // 適宜調整可能
+                    const adjustment = 0.1; // カメラの映像より前に出るように調節する
                     midPoint.z -= adjustment;
 
                     // 座標軸の位置を中点に設定
